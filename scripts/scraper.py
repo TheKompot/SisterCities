@@ -65,42 +65,15 @@ def sister_cities(link:str) -> dict:
                 town = remove_brackets(town.text.strip())
                 data[town] = {}
                 towns.append(town)
-            
-            added_data = False
-
-            for index,div in enumerate(section.find_all('div',class_="div-col")):
-                try:
-                    data[towns[index]]['sister_city'] = []
-                    data[towns[index]]['country_of_sc'] = []
-                except IndexError:
-                    print('error')
-                    return {}
-                
-                for list_sc in div.find_all('ul'):
-                    for sc in list_sc.find_all('li'):
-                        
-                        l = list(map(remove_brackets,sc.text.strip().split(',')))
-                        if len(l) == 1:
-                            city = l[0]
-                            country = "NaN"
-                        else:
-                            city = l[0]
-                            country = l[-1]
-
-                        data[towns[index]]['sister_city'].append(city)
-                        data[towns[index]]['country_of_sc'].append(country)
-                        added_data = True
-
-                
+   
             for index,list_sc in enumerate(section.find_all('ul')):
-                if added_data:
-                    break
+
                 try:
                     data[towns[index]]['sister_city'] = []
                     data[towns[index]]['country_of_sc'] = []
                 except IndexError:
-                    print('error')
-                    return {}
+                    print(index)
+                    break
                 
                 for sc in list_sc.find_all('li'):
                     
@@ -132,26 +105,30 @@ if __name__ == "__main__":
                          "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_North_America",
                          "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_South_America",
                          "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_the_United_Kingdom",
+                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_New_England"
                          ]
+    other_american_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Arizona",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_California",
+                            ]
 
     for link, continent in links:
         country = link
         while country.find('in_') != -1:
             country = country[country.find('in_')+3:]
 
-        if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines"]:
+        if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines","Thailand"]:
             continue # kazahstan does not have its own page, UK will be scrapped with regions
         
-        #if country == "Thailand":
-        print(country)
-        sc = sister_cities(link)
-        print()
+        if country == "the_Philippines":
+            print(country)
+            sc = sister_cities(link)
+            print()
 
-        # for city in sc:
-        #     print(city)
-        #     print(sc[city])
-        #     print()
-        #     break
+            for city in sc:
+                print(city)
+                print(sc[city])
+                print()
+                
 
         #data.update(sc)
 
