@@ -66,14 +66,42 @@ def sister_cities(link:str) -> dict:
                 data[town] = {}
                 towns.append(town)
             
-            for index,list_sc in enumerate(section.find_all('ul')):
+            added_data = False
+
+            for index,div in enumerate(section.find_all('div',class_="div-col")):
                 try:
                     data[towns[index]]['sister_city'] = []
                     data[towns[index]]['country_of_sc'] = []
                 except IndexError:
                     print('error')
                     return {}
+                
+                for list_sc in div.find_all('ul'):
+                    for sc in list_sc.find_all('li'):
+                        
+                        l = list(map(remove_brackets,sc.text.strip().split(',')))
+                        if len(l) == 1:
+                            city = l[0]
+                            country = "NaN"
+                        else:
+                            city = l[0]
+                            country = l[-1]
 
+                        data[towns[index]]['sister_city'].append(city)
+                        data[towns[index]]['country_of_sc'].append(country)
+                        added_data = True
+
+                
+            for index,list_sc in enumerate(section.find_all('ul')):
+                if added_data:
+                    break
+                try:
+                    data[towns[index]]['sister_city'] = []
+                    data[towns[index]]['country_of_sc'] = []
+                except IndexError:
+                    print('error')
+                    return {}
+                
                 for sc in list_sc.find_all('li'):
                     
                     l = list(map(remove_brackets,sc.text.strip().split(',')))
@@ -86,7 +114,6 @@ def sister_cities(link:str) -> dict:
 
                     data[towns[index]]['sister_city'].append(city)
                     data[towns[index]]['country_of_sc'].append(country)
-
             go_further = True
         
         num+=1
@@ -94,6 +121,7 @@ def sister_cities(link:str) -> dict:
         
 
 if __name__ == "__main__":
+    # add links to certain states from US
     data = {}
     links = links_from_mainpage()
     
@@ -111,17 +139,19 @@ if __name__ == "__main__":
         while country.find('in_') != -1:
             country = country[country.find('in_')+3:]
 
-        if country in ["Kazakhstan", "the_United_Kingdom"]:
+        if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines"]:
             continue # kazahstan does not have its own page, UK will be scrapped with regions
-
-        if False:
-            sc = sister_cities(link)
-            sc['continent'] = continent
-            sc['country'] =  country
-
+        
+        #if country == "Thailand":
         print(country)
-        print(link)
+        sc = sister_cities(link)
         print()
+
+        # for city in sc:
+        #     print(city)
+        #     print(sc[city])
+        #     print()
+        #     break
 
         #data.update(sc)
 
