@@ -38,6 +38,13 @@ def remove_brackets(word:str) -> str:
     word = word[:word.find('[')]
     return word
 
+def sister_cities_philippines() -> dict:
+    pass
+
+def sister_cities_for_regions(link:str) -> dict:
+    data = {} # {city -> {sister_city -> [sister_cities], country_of_sc -> [country_of_sc]},
+              #  country -> country}
+
 def sister_cities(link:str) -> dict:
     data = {} # city -> {sister_city -> [sister_cities], country_of_sc -> [country_of_sc]}
 
@@ -89,12 +96,33 @@ def sister_cities(link:str) -> dict:
 if __name__ == "__main__":
     data = {}
     links = links_from_mainpage()
+    
+    links_for_regions = ["https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Asia",
+                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Africa",
+                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Oceania",
+                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Europe",
+                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_North_America",
+                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_South_America",
+                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_the_United_Kingdom",
+                         ]
 
     for link, continent in links:
-        print(link)
-        sc = sister_cities(link)
-        sc['continent'] = continent
+        country = link
+        while country.find('in_') != -1:
+            country = country[country.find('in_')+3:]
 
-        data.update(sc)
+        if country in ["Kazakhstan", "the_United_Kingdom"]:
+            continue # kazahstan does not have its own page, UK will be scrapped with regions
+
+        if False:
+            sc = sister_cities(link)
+            sc['continent'] = continent
+            sc['country'] =  country
+
+        print(country)
+        print(link)
+        print()
+
+        #data.update(sc)
 
 #print(data)
