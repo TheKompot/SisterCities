@@ -38,9 +38,62 @@ def remove_brackets(word:str) -> str:
     word = word[:word.find('[')]
     return word
 
-def sister_cities_philippines() -> dict:
-    pass
+def sister_cities_philippines(link) -> dict:
 
+    data = {}
+
+    page = requests.get(link)
+
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    num = 1
+    go_further = True
+
+    while go_further:
+        result = soup.find_all("section", class_="mf-section-"+str(num))
+
+        go_further = False
+        for section in result:
+            towns = []
+            for town_list in section.find_all('ul'):
+                for town in town_list.find_all('li'):
+                    town = remove_brackets(town.text.strip())
+                    data[town] = {}
+                    towns.append(town)
+
+            for index,list_sc in enumerate(section.find_all('dl')):
+                # print(towns[index])
+                # print('--------------')
+                try:
+                    data[towns[index]]['sister_city'] = []
+                    data[towns[index]]['country_of_sc'] = []
+                except IndexError:
+                    # print(index)
+                    break
+                
+                for sc in list_sc.find_all('dd'):
+                    
+                    l = list(map(remove_brackets,sc.text.strip().split(',')))
+                    if len(l) == 1:
+                        city = l[0]
+                        country = "NaN"
+                    else:
+                        city = l[0]
+                        country = l[-1]
+                    if city == '':
+                        continue
+                    data[towns[index]]['sister_city'].append(city)
+                    data[towns[index]]['country_of_sc'].append(country)
+                    data[towns[index]]['country'] = "the_Philippines"
+                    data[towns[index]]['continent'] = 'Asia'
+                #     print(city)
+                # print()
+            go_further = True
+        
+        num+=1
+    
+
+    return data
 def sister_cities_for_regions(link:str) -> dict:
     data = {} # {city -> {sister_city -> [sister_cities], country_of_sc -> [country_of_sc]},
               #  country -> country}
@@ -138,86 +191,93 @@ def sister_cities(link:str) -> dict:
         
 
 if __name__ == "__main__":
-    data = {}
-    links = links_from_mainpage()
-    
-    links_for_regions = ["https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Asia",
-                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Africa",
-                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Oceania",
-                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Europe",
-                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_North_America",
-                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_South_America",
-                         "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_the_United_Kingdom",
-                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_New_England"
-                         ]
-    other_american_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Arizona",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_California",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Colorado",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Illinois",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Michigan",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_New_York",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_North_Carolina",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Ohio",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Pennsylvania",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Texas",
-                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Washington"
-                            ]
-    special_us_states_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Maryland",
-                               "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Florida"]
-
-    for link in links_for_regions:
-        region = link
-        while region.find('in_') != -1:
-            region = region[region.find('in_')+3:]
-        
-        print(region)
-        sc = sister_cities_for_regions(link)
-        print()
-
-        for town in sc:
-            sc[town]['continent'] = region
-            if region == 'New_England':
-                sc[town]['country'] = 'the_United_States'
-                sc[town]['continent'] = "North America"
-        data.update(sc)
-
-    for link, continent in links:
-        country = link
-        while country.find('in_') != -1:
-            country = country[country.find('in_')+3:]
-
-        if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines","Thailand"]:
-            continue # kazahstan does not have its own page, UK will be scrapped with regions
-        
-        print(country)
-        sc = sister_cities(link)
-        print()
-        
-        for town in sc:
-            sc[town]['country'] = country
-            sc[town]['continent'] = continent
-        data.update(sc)
-
-    for link in other_american_links:
-        sc = sister_cities(link)
-        for town in sc:
-            sc[town]['country'] = 'the_United_States'
-            sc[town]['continent'] = 'North America'
-        data.update(sc)
-
-    # Adding thailand
-    data['Bangkok'] = {'sister_city':["Aichi Prefecture","Ankara","Astana","Beijing","Chaozhou","Chonqing",'Fukuoka Prefecture','Guangzhou','Hanoi','Ho Chi Minh City','Istanbul','Jakarta','Lausanne','Manila','Moscow','Penang Island','Phnom Penh','Saint Petersburg','Seoul','Shandong','Shanghai','Ulaanbaatar','Washington, D.C.','Wuhan'],
-                    'country_of_sc':['Japan',"Turkey","Kazakhstan",'China','China','China','Japan','China','Vietnam','Vietnam','Turkey','Indonesia','Switzerland','Philippines','Russia','Malaysia','Cambodia','Russia','South Korea','China','China','Mongolia','United States','China'],
-                    'country':'Thailand',
-                    'continent':'Asia'}
-    data['Chiang Rai'] = {'sister_city':["Union City"],
-                        'country_of_sc':['United States'],
-                        'country':'Thailand',
-                        'continent':'Asia'}
-    data['Udon Thani'] = {'sister_city':["Reno"],
-                        'country_of_sc':['United States'],
-                        'country':'Thailand',
-                        'continent':'Asia'}
-
-
+    data = sister_cities_philippines("https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_the_Philippines")
+    data.update(sister_cities_philippines("https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Metro_Manila"))
+    del data['List of sister cities in Metro Manila']
+    del data['List of twin towns and sister cities in Asia']
+    del data['Lists of twin towns and sister cities']
     print(data)
+    
+    # data = {}
+    # links = links_from_mainpage()
+    
+    # links_for_regions = ["https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Asia",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Africa",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_Oceania",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Europe",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_North_America",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_South_America",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_twin_towns_and_sister_cities_in_the_United_Kingdom",
+    #                      "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_New_England"
+    #                      ]
+    # other_american_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Arizona",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_California",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Colorado",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Illinois",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Michigan",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_New_York",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_North_Carolina",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Ohio",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Pennsylvania",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Texas",
+    #                         "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Washington"
+    #                         ]
+    # special_us_states_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Maryland",
+    #                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Florida"]
+
+    # for link in links_for_regions:
+    #     region = link
+    #     while region.find('in_') != -1:
+    #         region = region[region.find('in_')+3:]
+        
+    #     print(region)
+    #     sc = sister_cities_for_regions(link)
+    #     print()
+
+    #     for town in sc:
+    #         sc[town]['continent'] = region
+    #         if region == 'New_England':
+    #             sc[town]['country'] = 'the_United_States'
+    #             sc[town]['continent'] = "North America"
+    #     data.update(sc)
+
+    # for link, continent in links:
+    #     country = link
+    #     while country.find('in_') != -1:
+    #         country = country[country.find('in_')+3:]
+
+    #     if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines","Thailand"]:
+    #         continue # kazahstan does not have its own page, UK will be scrapped with regions
+        
+    #     print(country)
+    #     sc = sister_cities(link)
+    #     print()
+        
+    #     for town in sc:
+    #         sc[town]['country'] = country
+    #         sc[town]['continent'] = continent
+    #     data.update(sc)
+
+    # for link in other_american_links:
+    #     sc = sister_cities(link)
+    #     for town in sc:
+    #         sc[town]['country'] = 'the_United_States'
+    #         sc[town]['continent'] = 'North America'
+    #     data.update(sc)
+
+    # # Adding thailand
+    # data['Bangkok'] = {'sister_city':["Aichi Prefecture","Ankara","Astana","Beijing","Chaozhou","Chonqing",'Fukuoka Prefecture','Guangzhou','Hanoi','Ho Chi Minh City','Istanbul','Jakarta','Lausanne','Manila','Moscow','Penang Island','Phnom Penh','Saint Petersburg','Seoul','Shandong','Shanghai','Ulaanbaatar','Washington, D.C.','Wuhan'],
+    #                 'country_of_sc':['Japan',"Turkey","Kazakhstan",'China','China','China','Japan','China','Vietnam','Vietnam','Turkey','Indonesia','Switzerland','Philippines','Russia','Malaysia','Cambodia','Russia','South Korea','China','China','Mongolia','United States','China'],
+    #                 'country':'Thailand',
+    #                 'continent':'Asia'}
+    # data['Chiang Rai'] = {'sister_city':["Union City"],
+    #                     'country_of_sc':['United States'],
+    #                     'country':'Thailand',
+    #                     'continent':'Asia'}
+    # data['Udon Thani'] = {'sister_city':["Reno"],
+    #                     'country_of_sc':['United States'],
+    #                     'country':'Thailand',
+    #                     'continent':'Asia'}
+
+
+    # print(data)
