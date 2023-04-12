@@ -109,7 +109,18 @@ if __name__ == "__main__":
                          ]
     other_american_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Arizona",
                             "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_California",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Colorado",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Illinois",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Michigan",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_New_York",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_North_Carolina",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Ohio",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Pennsylvania",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Texas",
+                            "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Washington"
                             ]
+    special_us_states_links = ["https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Maryland",
+                               "https://en.m.wikipedia.org/wiki/List_of_sister_cities_in_Florida"]
 
     for link, continent in links:
         country = link
@@ -119,17 +130,19 @@ if __name__ == "__main__":
         if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines","Thailand"]:
             continue # kazahstan does not have its own page, UK will be scrapped with regions
         
-        if country == "the_Philippines":
-            print(country)
-            sc = sister_cities(link)
-            print()
+        print(country)
+        sc = sister_cities(link)
+        print()
+        
+        for town in sc:
+            sc[town]['country'] = country
+            sc[town]['continent'] = continent
+        data.update(sc)
 
-            for city in sc:
-                print(city)
-                print(sc[city])
-                print()
-                
-
-        #data.update(sc)
-
-#print(data)
+    for link in other_american_links:
+        sc = sister_cities(link)
+        for town in sc:
+            sc[town]['country'] = 'the_United_States'
+            sc[town]['continent'] = 'North America'
+        data.update(sc)
+print(data)
