@@ -4,6 +4,10 @@ from bs4 import BeautifulSoup
 import requests
 import pickle
  
+blacklist = set()
+with open('data/remove.txt',encoding='utf-8') as f:
+    for town in f.read().split('\n'):
+        blacklist.add(town)
 
 def links_from_mainpage() -> list:
     output_links = [] # [(link, continent)]
@@ -126,6 +130,8 @@ def sister_cities_for_regions(link:str) -> dict:
             towns = []
             for town in section.find_all('p'):
                 town = remove_brackets(town.text.strip())
+                if town in blacklist:
+                    continue
                 data[town] = {}
                 towns.append(town)
    
@@ -171,6 +177,8 @@ def sister_cities(link:str) -> dict:
             towns = []
             for town in section.find_all('p'):
                 town = remove_brackets(town.text.strip())
+                if town in blacklist:
+                    continue
                 data[town] = {}
                 towns.append(town)
    
@@ -238,10 +246,17 @@ if __name__ == "__main__":
         region = link
         while region.find('in_') != -1:
             region = region[region.find('in_')+3:]
-        
-    #     print(region)
+
+        # if region == 'the_United_Kingdom':
+        print(region)
         sc = sister_cities_for_regions(link)
-    #     print()
+        # print()
+        
+            # for town in sc:
+            #     print(town)
+            #     print(sc[town])
+            #     print()
+
 
         for town in sc:
             sc[town]['continent'] = region
@@ -257,12 +272,16 @@ if __name__ == "__main__":
 
         if country in ["Kazakhstan", "the_United_Kingdom","the_Philippines","Thailand"]:
             continue # kazahstan does not have its own page, UK will be scrapped with regions
-        
-    #     print(country)
+
+        # if country == 'Canada':
+        print(country)
         sc = sister_cities(link)
-    #     print()
+        # print()
         
         for town in sc:
+            # print(town)
+            # print(sc[town])
+            # print()
             sc[town]['country'] = country
             sc[town]['continent'] = continent
         data.update(sc)
