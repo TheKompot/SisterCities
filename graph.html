@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 600px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "Asadabad", "label": "Asadabad", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Union City", "label": "Union City", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ghazni", "label": "Ghazni", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Hayward", "label": "Hayward", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Nishapur", "label": "Nishapur", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Herat", "label": "Herat", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Council Bluffs", "label": "Council Bluffs", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kandahar", "label": "Kandahar", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Jalalabad", "label": "Jalalabad", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "San Diego", "label": "San Diego", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kabul", "label": "Kabul", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ankara", "label": "Ankara", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kazan", "label": "Kazan", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Manama", "label": "Manama", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Astana", "label": "Astana", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kuwait City", "label": "Kuwait City", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Bishkek", "label": "Bishkek", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Mazar-i-Sharif", "label": "Mazar-i-Sharif", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Dushanbe", "label": "Dushanbe", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Mashhad", "label": "Mashhad", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Karachi", "label": "Karachi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Bandar Seri Begawan", "label": "Bandar Seri Begawan", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Nanjing", "label": "Nanjing", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Phnom Penh", "label": "Phnom Penh", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Bangkok", "label": "Bangkok", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Beijing", "label": "Beijing", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Busan", "label": "Busan", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Chongqing", "label": "Chongqing", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Hanoi", "label": "Hanoi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Hefei", "label": "Hefei", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ho Chi Minh City", "label": "Ho Chi Minh City", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Incheon", "label": "Incheon", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kitakyushu", "label": "Kitakyushu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kunming", "label": "Kunming", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Long Beach", "label": "Long Beach", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Lowell", "label": "Lowell", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Shanghai", "label": "Shanghai", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Shenzhen", "label": "Shenzhen", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Vientiane", "label": "Vientiane", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Almaty", "label": "Almaty", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ahmadi", "label": "Ahmadi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Champasak", "label": "Champasak", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Sihanoukville", "label": "Sihanoukville", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Maardu", "label": "Maardu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Nanning", "label": "Nanning", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Seattle", "label": "Seattle", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Dili", "label": "Dili", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Coimbra", "label": "Coimbra", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Darwin", "label": "Darwin", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Aktobe", "label": "Aktobe", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Karamay", "label": "Karamay", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Orenburg", "label": "Orenburg", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Oral", "label": "Oral", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Alexandria", "label": "Alexandria", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Daegu", "label": "Daegu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Istanbul", "label": "Istanbul", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Jeddah", "label": "Jeddah", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Malatya", "label": "Malatya", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Modena", "label": "Modena", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Moscow", "label": "Moscow", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Rennes", "label": "Rennes", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Riga", "label": "Riga", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Rosario", "label": "Rosario", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Saint Petersburg", "label": "Saint Petersburg", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "San Jos\u00e9", "label": "San Jos\u00e9", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tashkent", "label": "Tashkent", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tel Aviv", "label": "Tel Aviv", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tucson", "label": "Tucson", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u00dcr\u00fcmqi", "label": "\u00dcr\u00fcmqi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Vilnius", "label": "Vilnius", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ashgabat", "label": "Ashgabat", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Colorado Springs", "label": "Colorado Springs", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Doha", "label": "Doha", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Gumi", "label": "Gumi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u0130zmir", "label": "\u0130zmir", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kyiv", "label": "Kyiv", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Lianyungang", "label": "Lianyungang", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Qazvin", "label": "Qazvin", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Samsun", "label": "Samsun", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tehran", "label": "Tehran", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Trabzon", "label": "Trabzon", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ufa", "label": "Ufa", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Wuhan", "label": "Wuhan", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Yinchuan", "label": "Yinchuan", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Amman", "label": "Amman", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Damascus", "label": "Damascus", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Gda\u0144sk", "label": "Gda\u0144sk", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Islamabad", "label": "Islamabad", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Nice", "label": "Nice", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Oulu", "label": "Oulu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Putrajaya", "label": "Putrajaya", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Seoul", "label": "Seoul", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tbilisi", "label": "Tbilisi", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ulaanbaatar", "label": "Ulaanbaatar", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "U\u015fak", "label": "U\u015fak", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Warsaw", "label": "Warsaw", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Karaganda", "label": "Karaganda", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Cluj-Napoca", "label": "Cluj-Napoca", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Songpa (Seoul)", "label": "Songpa (Seoul)", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kokshetau", "label": "Kokshetau", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Waukesha", "label": "Waukesha", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kostanay", "label": "Kostanay", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kirklees", "label": "Kirklees", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kyzylorda", "label": "Kyzylorda", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Arvada", "label": "Arvada", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Bolu", "label": "Bolu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Bursa", "label": "Bursa", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "\u00d6zg\u00f6n", "label": "\u00d6zg\u00f6n", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Kostroma", "label": "Kostroma", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Manisa", "label": "Manisa", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Ostrava", "label": "Ostrava", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Oskemen", "label": "Oskemen", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Babruysk", "label": "Babruysk", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Barnaul", "label": "Barnaul", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tacheng", "label": "Tacheng", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Petropavl", "label": "Petropavl", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Omsk", "label": "Omsk", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Shymkent", "label": "Shymkent", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Acharnes", "label": "Acharnes", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Baiyin", "label": "Baiyin", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Khujand", "label": "Khujand", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Pattaya", "label": "Pattaya", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Stevenage", "label": "Stevenage", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Florence", "label": "Florence", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Gaziantep", "label": "Gaziantep", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Guangzhou", "label": "Guangzhou", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Isfahan", "label": "Isfahan", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Mexico City", "label": "Mexico City", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Sarajevo", "label": "Sarajevo", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Tunis", "label": "Tunis", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Y\u0131ld\u0131r\u0131m", "label": "Y\u0131ld\u0131r\u0131m", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Da Nang", "label": "Da Nang", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Luang Prabang", "label": "Luang Prabang", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Chengdu", "label": "Chengdu", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "Elgin", "label": "Elgin", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "Asadabad", "to": "Union City", "width": 1}, {"from": "Ghazni", "to": "Hayward", "width": 1}, {"from": "Ghazni", "to": "Nishapur", "width": 1}, {"from": "Nishapur", "to": "Herat", "width": 1}, {"from": "Herat", "to": "Council Bluffs", "width": 1}, {"from": "Council Bluffs", "to": "Kandahar", "width": 1}, {"from": "Jalalabad", "to": "San Diego", "width": 1}, {"from": "Kabul", "to": "Ankara", "width": 1}, {"from": "Kabul", "to": "Kazan", "width": 1}, {"from": "Ankara", "to": "Manama", "width": 1}, {"from": "Ankara", "to": "Astana", "width": 1}, {"from": "Ankara", "to": "Kuwait City", "width": 1}, {"from": "Ankara", "to": "Bishkek", "width": 1}, {"from": "Kazan", "to": "Astana", "width": 1}, {"from": "Mazar-i-Sharif", "to": "Dushanbe", "width": 1}, {"from": "Mazar-i-Sharif", "to": "Mashhad", "width": 1}, {"from": "Manama", "to": "Karachi", "width": 1}, {"from": "Bandar Seri Begawan", "to": "Nanjing", "width": 1}, {"from": "Phnom Penh", "to": "Bangkok", "width": 1}, {"from": "Phnom Penh", "to": "Beijing", "width": 1}, {"from": "Phnom Penh", "to": "Busan", "width": 1}, {"from": "Phnom Penh", "to": "Chongqing", "width": 1}, {"from": "Phnom Penh", "to": "Hanoi", "width": 1}, {"from": "Phnom Penh", "to": "Hefei", "width": 1}, {"from": "Phnom Penh", "to": "Ho Chi Minh City", "width": 1}, {"from": "Phnom Penh", "to": "Incheon", "width": 1}, {"from": "Phnom Penh", "to": "Kitakyushu", "width": 1}, {"from": "Phnom Penh", "to": "Kunming", "width": 1}, {"from": "Phnom Penh", "to": "Long Beach", "width": 1}, {"from": "Phnom Penh", "to": "Lowell", "width": 1}, {"from": "Phnom Penh", "to": "Shanghai", "width": 1}, {"from": "Phnom Penh", "to": "Shenzhen", "width": 1}, {"from": "Bangkok", "to": "Astana", "width": 1}, {"from": "Beijing", "to": "Astana", "width": 1}, {"from": "Beijing", "to": "Vientiane", "width": 1}, {"from": "Hanoi", "to": "Astana", "width": 1}, {"from": "Ho Chi Minh City", "to": "Almaty", "width": 1}, {"from": "Ho Chi Minh City", "to": "Ahmadi", "width": 1}, {"from": "Ho Chi Minh City", "to": "Champasak", "width": 1}, {"from": "Ho Chi Minh City", "to": "Vientiane", "width": 1}, {"from": "Kunming", "to": "Vientiane", "width": 1}, {"from": "Shenzhen", "to": "Bishkek", "width": 1}, {"from": "Sihanoukville", "to": "Maardu", "width": 1}, {"from": "Sihanoukville", "to": "Nanning", "width": 1}, {"from": "Sihanoukville", "to": "Seattle", "width": 1}, {"from": "Nanning", "to": "Champasak", "width": 1}, {"from": "Dili", "to": "Coimbra", "width": 1}, {"from": "Dili", "to": "Darwin", "width": 1}, {"from": "Aktobe", "to": "Karamay", "width": 1}, {"from": "Aktobe", "to": "Orenburg", "width": 1}, {"from": "Orenburg", "to": "Oral", "width": 1}, {"from": "Almaty", "to": "Alexandria", "width": 1}, {"from": "Almaty", "to": "Bishkek", "width": 1}, {"from": "Almaty", "to": "Daegu", "width": 1}, {"from": "Almaty", "to": "Istanbul", "width": 1}, {"from": "Almaty", "to": "Jeddah", "width": 1}, {"from": "Almaty", "to": "Malatya", "width": 1}, {"from": "Almaty", "to": "Modena", "width": 1}, {"from": "Almaty", "to": "Moscow", "width": 1}, {"from": "Almaty", "to": "Rennes", "width": 1}, {"from": "Almaty", "to": "Riga", "width": 1}, {"from": "Almaty", "to": "Rosario", "width": 1}, {"from": "Almaty", "to": "Saint Petersburg", "width": 1}, {"from": "Almaty", "to": "San Jos\u00e9", "width": 1}, {"from": "Almaty", "to": "Tashkent", "width": 1}, {"from": "Almaty", "to": "Tel Aviv", "width": 1}, {"from": "Almaty", "to": "Tucson", "width": 1}, {"from": "Almaty", "to": "\u00dcr\u00fcmqi", "width": 1}, {"from": "Almaty", "to": "Vilnius", "width": 1}, {"from": "Bishkek", "to": "Astana", "width": 1}, {"from": "Bishkek", "to": "Ashgabat", "width": 1}, {"from": "Bishkek", "to": "Colorado Springs", "width": 1}, {"from": "Bishkek", "to": "Doha", "width": 1}, {"from": "Bishkek", "to": "Gumi", "width": 1}, {"from": "Bishkek", "to": "\u0130zmir", "width": 1}, {"from": "Bishkek", "to": "Kyiv", "width": 1}, {"from": "Bishkek", "to": "Lianyungang", "width": 1}, {"from": "Bishkek", "to": "Qazvin", "width": 1}, {"from": "Bishkek", "to": "Samsun", "width": 1}, {"from": "Bishkek", "to": "Tashkent", "width": 1}, {"from": "Bishkek", "to": "Tehran", "width": 1}, {"from": "Bishkek", "to": "Trabzon", "width": 1}, {"from": "Bishkek", "to": "Ufa", "width": 1}, {"from": "Bishkek", "to": "\u00dcr\u00fcmqi", "width": 1}, {"from": "Bishkek", "to": "Wuhan", "width": 1}, {"from": "Bishkek", "to": "Yinchuan", "width": 1}, {"from": "Moscow", "to": "Astana", "width": 1}, {"from": "Riga", "to": "Astana", "width": 1}, {"from": "Rosario", "to": "Kuwait City", "width": 1}, {"from": "Saint Petersburg", "to": "Astana", "width": 1}, {"from": "Tashkent", "to": "Astana", "width": 1}, {"from": "Vilnius", "to": "Astana", "width": 1}, {"from": "Astana", "to": "Amman", "width": 1}, {"from": "Astana", "to": "Ashgabat", "width": 1}, {"from": "Astana", "to": "Damascus", "width": 1}, {"from": "Astana", "to": "Gda\u0144sk", "width": 1}, {"from": "Astana", "to": "Islamabad", "width": 1}, {"from": "Astana", "to": "Kyiv", "width": 1}, {"from": "Astana", "to": "Nice", "width": 1}, {"from": "Astana", "to": "Oulu", "width": 1}, {"from": "Astana", "to": "Putrajaya", "width": 1}, {"from": "Astana", "to": "Seoul", "width": 1}, {"from": "Astana", "to": "Tbilisi", "width": 1}, {"from": "Astana", "to": "Ufa", "width": 1}, {"from": "Astana", "to": "Ulaanbaatar", "width": 1}, {"from": "Astana", "to": "U\u015fak", "width": 1}, {"from": "Astana", "to": "Warsaw", "width": 1}, {"from": "Karaganda", "to": "Cluj-Napoca", "width": 1}, {"from": "Karaganda", "to": "Songpa (Seoul)", "width": 1}, {"from": "Kokshetau", "to": "Waukesha", "width": 1}, {"from": "Kostanay", "to": "Kirklees", "width": 1}, {"from": "Kyzylorda", "to": "Arvada", "width": 1}, {"from": "Kyzylorda", "to": "Bolu", "width": 1}, {"from": "Kyzylorda", "to": "Bursa", "width": 1}, {"from": "Bolu", "to": "\u00d6zg\u00f6n", "width": 1}, {"from": "Oral", "to": "Kostroma", "width": 1}, {"from": "Oral", "to": "Manisa", "width": 1}, {"from": "Oral", "to": "Ostrava", "width": 1}, {"from": "Oskemen", "to": "Babruysk", "width": 1}, {"from": "Oskemen", "to": "Barnaul", "width": 1}, {"from": "Oskemen", "to": "Tacheng", "width": 1}, {"from": "Petropavl", "to": "Omsk", "width": 1}, {"from": "Shymkent", "to": "Acharnes", "width": 1}, {"from": "Shymkent", "to": "Baiyin", "width": 1}, {"from": "Shymkent", "to": "Khujand", "width": 1}, {"from": "Shymkent", "to": "Pattaya", "width": 1}, {"from": "Shymkent", "to": "Stevenage", "width": 1}, {"from": "Kuwait City", "to": "Florence", "width": 1}, {"from": "Kuwait City", "to": "Gaziantep", "width": 1}, {"from": "Kuwait City", "to": "Guangzhou", "width": 1}, {"from": "Kuwait City", "to": "Isfahan", "width": 1}, {"from": "Kuwait City", "to": "Mexico City", "width": 1}, {"from": "Kuwait City", "to": "Sarajevo", "width": 1}, {"from": "Kuwait City", "to": "Tunis", "width": 1}, {"from": "\u00d6zg\u00f6n", "to": "Y\u0131ld\u0131r\u0131m", "width": 1}, {"from": "Champasak", "to": "Da Nang", "width": 1}, {"from": "Luang Prabang", "to": "Chengdu", "width": 1}, {"from": "Vientiane", "to": "Elgin", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
