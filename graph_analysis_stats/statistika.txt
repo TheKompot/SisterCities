@@ -1,0 +1,8 @@
+Celkovy pocet miest: 13265
+Velkost najvacsieho komponentu / celkovy pocet miest: 0.7331323030531474
+Priemerny stupen vrchola: 2.7835657745947984
+Hustota stupnov vrchola: 0.00020985869832590458
+Pocet komponentov suvislosti: 1400
+Najvacsi stupen vrchola: 57 (nazov mesta: Rio de Janeiro)
+Velkost najvacsieho komponentu suvislosti: 9725 vrcholov
+Priemerna najkratsia cesta v najvacsom komponente: 7.320858935409064
