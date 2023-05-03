@@ -1,8 +1,19 @@
 Celkovy pocet miest: 13265
-Velkost najvacsieho komponentu / celkovy pocet miest: 0.7331323030531474
+Velkost najvacsieho komponentu / celkovy pocet miest: 0.0.73315241971958
 Priemerny stupen vrchola: 2.7835657745947984
 Hustota stupnov vrchola: 0.00020985869832590458
 Pocet komponentov suvislosti: 1400
 Najvacsi stupen vrchola: 57 (nazov mesta: Rio de Janeiro)
 Velkost najvacsieho komponentu suvislosti: 9725 vrcholov
 Priemerna najkratsia cesta v najvacsom komponente: 7.320858935409064
+
+Number of towns from Europe: 8752
+Asia: 1700
+Africa: 433
+North America: 1805
+Oceania: 213
+South America: 362
+
+
+Aka je distribucia kontinentov vo velkom komponente>
+Pozriet co su tie 2 mensie uzly - ktore krajiny obsahuju- su to tie asociacie?
