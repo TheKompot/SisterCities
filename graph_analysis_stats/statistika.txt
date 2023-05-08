@@ -16,6 +16,17 @@ South America: 362
 
 Modularita: 0.17062027532924876
 
+Max pagerank: Laredo (https://en.wikipedia.org/wiki/Laredo,_Texas#Sister_cities ; celkom zaujimave)
+
+Distribucia stupna vrcholov: ziadne zo znamych rozdeleni (najblizsie Pareto ale nic moc)
+
+Pomer giant_component/cely_graf:
+Europe: 6228/8752=0.7116088
+Asia: 1408/1700=0.8282353
+Africa: 388/433=0.8960739
+North America: 1237/1805=0.6853186
+Oceania: 156/213=0.7323944
+South America: 308/362=0.8508287
 
 Aka je distribucia kontinentov vo velkom komponente>
 Pozriet co su tie 2 mensie uzly - ktore krajiny obsahuju- su to tie asociacie?
