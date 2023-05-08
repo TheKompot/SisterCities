@@ -14,6 +14,8 @@ North America: 1805
 Oceania: 213
 South America: 362
 
+Modularita: 0.17062027532924876
+
 
 Aka je distribucia kontinentov vo velkom komponente>
 Pozriet co su tie 2 mensie uzly - ktore krajiny obsahuju- su to tie asociacie?
